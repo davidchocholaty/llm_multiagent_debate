@@ -4,6 +4,14 @@ import numpy as np
 import time
 import pickle
 from tqdm import tqdm
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+openai.api_type = "azure"
+openai.api_base = os.environ['OPEN_AI_API_BASE']
+openai.api_version = os.environ['OPEN_AI_API_VERSION']
+openai.api_key = os.environ['OPEN_AI_API_KEY']
 
 def parse_bullets(sentence):
     bullets_preprocess = sentence.split("\n")
@@ -26,10 +34,12 @@ def parse_bullets(sentence):
 def generate_answer(answer_context):
     try:
         completion = openai.ChatCompletion.create(
-                  model="gpt-3.5-turbo-0301",
-                  messages=answer_context,
-                  n=1)
-    except:
+              # engine="gpt-35-turbo",
+              engine="gpt-4",
+              messages=answer_context)
+    
+    except Exception as e:
+        print(e)
         print("retrying due to an error......")
         time.sleep(20)
         return generate_answer(answer_context)
@@ -135,6 +145,8 @@ if __name__ == "__main__":
         generated_description[(a, b, c, d, e, f)] = (agent_contexts, answer)
 
         try:
+            print("TEXT ANSWS:")
+            print(text_answers)
             text_answer = most_frequent(text_answers)
             if text_answer == answer:
                 scores.append(1)
