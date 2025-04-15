@@ -9,7 +9,7 @@ import string
 
 import pandas
 
-# random.seed(1234)
+random.seed(1234)
 
 
 class StrategyQA:
