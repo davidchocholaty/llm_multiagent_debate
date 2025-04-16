@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 from dotenv import load_dotenv
 
-from data_utils import ANLI, ECQA, Aqua, DateUnderstanding, GSM8k, StrategyQA
+from data_utils import ANLI, ECQA, Aqua, DateUnderstanding, StrategyQA
 
 
 load_dotenv()
@@ -74,51 +74,57 @@ def parse_answers(dataset, text_answers):
 
     if dataset == "SQA":
         for ans in text_answers:
-            if re.search(r'\b(no|No|NO)\.?\b', ans):
-                parsed_answers.append("no")
-            elif re.search(r'\b(yes|Yes|YES)\.?\b', ans):
-                parsed_answers.append("yes")
+            matches = re.findall(r'\b(yes|no)\b', ans, re.IGNORECASE)
+            
+            if matches:
+                ans = matches[-1].lower()
+                parsed_answers.append(ans)
         
         if not parsed_answers:
             invalid_answer += 1
     elif dataset == "ECQA":
         for ans in text_answers:
-            match = re.search(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\(([A-E])\)', ans)
 
-            if match:
-                letter = match.group(1)
+            if matches:
+                letter = matches[-1]
                 parsed_answers.append(letter)
         
         if not parsed_answers:
             invalid_answer += 1
     elif dataset == "Aqua":
         for ans in text_answers:
-            match = re.search(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\(([A-E])\)', ans)
 
-            if match:
-                letter = match.group(1)
+            if matches:
+                letter = matches[-1]
                 parsed_answers.append(letter)
         
         if not parsed_answers:
             invalid_answer += 1
     elif dataset == "ANLI":
         for ans in text_answers:
-            match = re.search(r'\((e|c|n|contradiction|neutral|entailment)\)', ans, re.IGNORECASE)
+            matches = re.findall(
+                r'\((e|c|n|contradiction|neutral|entailment)\)',
+                ans,
+                re.IGNORECASE,
+            )
 
-            if match:
-                letter = match.group(1)
+            if matches:
+                letter = matches[-1][0].lower()
                 parsed_answers.append(letter)
         if not parsed_answers:
             invalid_answer += 1
     elif dataset == "DateUnderstanding":
         for ans in text_answers:
-            match = re.search(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\(([A-E])\)', ans)
 
-            if match:
-                letter = match.group(1)
+            if matches:
+                letter = matches[-1]
                 parsed_answers.append(letter)
         if not parsed_answers:
             invalid_answer += 1
+    
 
     return parsed_answers, invalid_answer
 
