@@ -84,7 +84,7 @@ def parse_answers(dataset, text_answers):
             invalid_answer += 1
     elif dataset == "ECQA":
         for ans in text_answers:
-            matches = re.findall(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\b[A-E]\b', ans)
 
             if matches:
                 letter = matches[-1]
@@ -94,7 +94,7 @@ def parse_answers(dataset, text_answers):
             invalid_answer += 1
     elif dataset == "Aqua":
         for ans in text_answers:
-            matches = re.findall(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\b[A-E]\b', ans)
 
             if matches:
                 letter = matches[-1]
@@ -105,7 +105,7 @@ def parse_answers(dataset, text_answers):
     elif dataset == "ANLI":
         for ans in text_answers:
             matches = re.findall(
-                r'\((e|c|n|contradiction|neutral|entailment)\)',
+                r'\b(e|c|n|contradiction|neutral|entailment)\b',
                 ans,
                 re.IGNORECASE,
             )
@@ -117,7 +117,7 @@ def parse_answers(dataset, text_answers):
             invalid_answer += 1
     elif dataset == "DateUnderstanding":
         for ans in text_answers:
-            matches = re.findall(r'\(([A-E])\)', ans)
+            matches = re.findall(r'\b[A-E]\b', ans)
 
             if matches:
                 letter = matches[-1]
