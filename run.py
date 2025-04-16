@@ -43,7 +43,7 @@ def generate_answer(answer_context):
     try:
         completion = openai.ChatCompletion.create(
               # engine="gpt-35-turbo",
-              engine="gpt-4",
+              engine="gpt-4o",
               messages=answer_context)
     
     except Exception as e:
