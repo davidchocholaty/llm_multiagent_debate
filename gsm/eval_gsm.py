@@ -119,7 +119,7 @@ def most_frequent(List):
     return num
 
 if __name__ == "__main__":
-    response_dict = json.load(open("gsm_debate_3_3.json", "r"))
+    response_dict = json.load(open("gsm_3_2.json", "r"))
 
     questions = list(response_dict.keys())
 
@@ -143,5 +143,5 @@ if __name__ == "__main__":
             pdb.set_trace()
             print(gt)
 
-        print("accuracies:", np.mean(accuracies), np.std(accuracies) / (len(accuracies) ** 0.5))
-
+        print("accuracies: ", accuracies)
+        print("accuracies (mean, std, sem):", np.mean(accuracies), np.std(accuracies), np.std(accuracies) / (len(accuracies) ** 0.5))

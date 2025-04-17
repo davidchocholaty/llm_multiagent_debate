@@ -2,6 +2,17 @@ import openai
 import json
 import numpy as np
 import random
+import os
+from dotenv import load_dotenv
+
+random.seed(1234)
+
+load_dotenv()
+openai.api_type = "azure"
+openai.api_base = os.environ['OPEN_AI_API_BASE']
+openai.api_version = os.environ['OPEN_AI_API_VERSION']
+openai.api_key = os.environ['OPEN_AI_API_KEY']
+
 
 def construct_message(agents, question, idx):
     if len(agents) == 0:
@@ -31,20 +42,24 @@ def read_jsonl(path: str):
 if __name__ == "__main__":
     agents = 3
     rounds = 2
-    random.seed(0)
 
     generated_description = {}
 
-    questions = read_jsonl("/data/vision/billf/scratch/yilundu/llm_iterative_debate/grade-school-math/grade_school_math/data/test.jsonl")
+    questions = read_jsonl("test.jsonl")
     random.shuffle(questions)
 
-    for data in questions[:100]:
+    idx = 0
+    for data in questions[:30]:
+        idx += 1
+        print(f"QUESTION: {idx}")
+        
         question = data['question']
         answer = data['answer']
 
         agent_contexts = [[{"role": "user", "content": """Can you solve the following math problem? {} Explain your reasoning. Your final answer should be a single numerical number, in the form \\boxed{{answer}}, at the end of your response. """.format(question)}] for agent in range(agents)]
 
         for round in range(rounds):
+            print(f"ROUND: {round}")
             for i, agent_context in enumerate(agent_contexts):
 
                 if round != 0:
@@ -53,12 +68,22 @@ if __name__ == "__main__":
                     agent_context.append(message)
 
                 completion = openai.ChatCompletion.create(
-                          model="gpt-3.5-turbo-0301",
-                          messages=agent_context,
-                          n=1)
+                    # engine="gpt-35-turbo",
+                    engine="gpt-4",
+                    messages=agent_context,
+                    n=1
+                )
+                #completion = openai.ChatCompletion.create(
+                #          model="gpt-3.5-turbo-0301",
+                #          messages=agent_context,
+                #          n=1)
 
                 assistant_message = construct_assistant_message(completion)
                 agent_context.append(assistant_message)
+
+                print(assistant_message)
+                print("--------------")
+            
 
         generated_description[question] = (agent_contexts, answer)
 
