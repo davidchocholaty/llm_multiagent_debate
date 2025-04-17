@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 
 random.seed(1234)
+# random.seed(0)
+# random.seed(9999)
 
 load_dotenv()
 openai.api_type = "azure"
@@ -69,7 +71,8 @@ if __name__ == "__main__":
 
                 completion = openai.ChatCompletion.create(
                     # engine="gpt-35-turbo",
-                    engine="gpt-4",
+                    # engine="gpt-4",
+                    engine="gpt-4o",
                     messages=agent_context,
                     n=1
                 )
@@ -87,7 +90,7 @@ if __name__ == "__main__":
 
         generated_description[question] = (agent_contexts, answer)
 
-    json.dump(generated_description, open("gsm_{}_{}.json".format(agents, rounds), "w"))
+    json.dump(generated_description, open("gsm_{}_{}_round_1.json".format(agents, rounds), "w"))
 
     import pdb
     pdb.set_trace()
